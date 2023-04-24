@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>D3 Practice Project</title>
+
+    <!-- include the library -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"> </script>
+    <script>
+        const div = d3.selectAll("div");
+    </script>   
+</head>
+
+
+<body>
+
+    <!-- <script>
+        // calling d3 object functions, select a certain element, appending something to the body element, use another method (text) to specify what text will be appended
+        d3.select("body")
+            .append("p1")
+            .text("Good afternoon");
+    </script>
+
+    <script>
+        var rect = canvas.append("rect") //draw a rectangle on the canvas
+                    .attr("width", 100)
+                    .attr("height", 50)
+                    .attr("fill", "blue")
+                    .attr("stroke", "black");
+        
+        var line = canvas.append("line") //draw a line on the canvas
+                    .attr("x1", 0)
+                    .attr("y1", 10)
+                    .attr("x2", 200)
+                    .attr("y2", 300)
+                    .attr("stroke", "green")
+                    .attr("stroke-width", 10);
+        
+        var text = canvas.append('text') //add text on the canvas
+                    .attr('x', 200)
+                    .attr('y', 50)
+                    .attr('stroke', 'black')
+                    .style("font-size", 20)
+                    .text("I'm another piece of text")
+ 
+    </script> -->
+
+    <script>
+            var dataArray = [20, 40, 50, 60];
+            var width = 500;
+            var height = 500;
+
+            var widthScale = d3.scaleLinear()
+                            .domain([0, 60])
+                            .range([0, width]);
+
+
+            var color = d3.scaleLinear()
+                        .domain([0, 60])
+                        .range(["red", "blue"]);
+
+            var x_axis = d3.axisBottom()
+                       .scale(widthScale);
+            
+            var canvasData = d3.select("body")
+                .append("svg") //NOTICE! append svg here to draw svg
+                .attr("width", width)
+                .attr("height", height)
+                .append("g") //make group
+                .attr("transform", "translate(20, 20)");
+                
+            var bars = canvasData.selectAll("rect") //return empty array
+                        .data(dataArray) //bond data to the empty selection
+                        .enter() //return placeholder for each data element
+                            .append("rect")
+                            .attr("width", function(d) {return widthScale(d)}) //d: each data element in the array
+                            .attr("height", 50)
+                            .attr("fill", function (d) { return color(d) })
+                            .attr("y", function (d, i) {return i * 100}); //i: the index of the element in the array
+
+            canvasData.append("g")
+            .attr("transform", "translate(0, 400)")
+            .call(x_axis)
+
+            // d3.json("myData.json", function (data) {
+            //         console.log(data);
+            // })
+
+</script>
+
+<script>
+            var canvas = d3.select("body")
+                .append("svg") //NOTICE! append svg here to draw svg
+                .attr("width", 500)
+                .attr("height", 500);
+
+            var circle = canvas.append("circle") //draw a circle on the canvas
+                    .attr("cx", 50) //在 canvas 裡，圓心 x 的位置
+                    .attr("cy", 250)
+                    .attr("r", 50) //radius
+                    .attr("fill", "red");
+
+            circle.transition() //transition 
+                .duration(1500)
+                .delay(1000)
+                .attr("cy", 150)
+                .attr("fill", "blue")
+                .transition()
+                .attr("cx", 200);
+</script>
+</body>
+

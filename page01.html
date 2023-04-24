@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>D3 Practice Project</title>
+
+    <!-- include the library -->
+    <script src="https://d3js.org/d3.v6.js"> </script>
+
+</head>
+
+<body> 
+    <svg class="line"></svg>
+    <svg class="area"></svg>
+    <svg class="area1"></svg>
+    <svg class="axis"></svg>
+
+    <script>
+    
+    //繪製 line
+        const data1 = [{ x: 10, y: 11 }, { x: 20, y: 21 }, { x: 30, y: 31 }, { x: 40, y: 41 }, { x: 50, y: 51 }]
+
+        const line = d3.line()
+                    .x(d => d.x) // 設定x值要抓 data1 的 x value
+                    .y(d => d.y) // 設定y值要抓 data1 的 y value
+
+
+        console.log(line(data1)) //M10,11L20,21L30,31L40,41L50,51
+
+        d3.select('.line') //綁定 .line DOM 
+            .append('path') //  加上 path
+            .attr('d', line(data1)) // path 的位置是 line(data1) 的各組資料點 d
+            .attr('stroke', 'black') //設定 path 的樣式顏色
+            .attr('stroke-width', '2') //設定 path 的樣式寬度
+    
+    //繪製 area
+        const data2 = [{ x: 10, y: 100 }, { x: 20, y: 100 }, { x: 30, y: 100 }, { x: 90, y: 20 }, { x: 220, y: 10 }]
+        
+        const area = d3.area()
+                    .x(d => d.x)
+                    .y1(d => d.y)
+                    .y0(0) //從 y = 0 開始畫
+
+        const area1 = d3.area()
+                    .x(d => d.x)
+                    .y1(d => d.y)
+                    .y0(10) //從 y = 10 開始畫
+        
+        d3.select('.area')
+                .append('path')
+                .attr('d', area(data2))
+                .attr('stroke', 'blue')
+                .attr('fill', 'blue')
+
+        d3.select('.area1')
+                .append('path')
+                .attr('d', area1(data2))
+                .attr('stroke', 'red')
+                .attr('fill', 'red')
+
+    //繪製軸線
+        // 我目前的資料集
+        const data3 = [{ x: 10, y: 100 }, { x: 20, y: 100 }, { x: 30, y: 100 }, { x: 90, y: 20 }, { x: 220, y: 10 }]
+
+        // 抓出 x 軸要使用的值
+        const xData = data3.map((i) => i.x);
+
+        // 設定X軸的比例尺與繪製範圍
+        const xScale = d3.scaleLinear()
+            .domain([0, d3.max(xData)]) //實際資料的範圍
+            .range([10, 290]); //對應到比例尺的範圍
+
+        //使用xScale的設定，繪製刻度(ticks)朝下的軸線
+        const xAxis = d3
+            .axisBottom(xScale)
+
+        // 呼叫軸線
+        d3.select('.axis').append("g").call(xAxis);
+
+    </script>
+</body>

@@ -1,0 +1,19 @@
+.lineChart {
+    width: 80%;
+    min-width: 300px;
+    margin: auto;
+}
+
+.lineChartUnmet {
+    width: 80%;
+    min-width: 300px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}

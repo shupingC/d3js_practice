@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Practice Project</title>
+
+    <!-- include the library -->
+    <script src="https://d3js.org/d3.v6.js"> </script>
+
+</head>
+
+<body>
+    <div class="chart"></div>
+    <style>
+        .chart{
+            width: 100%;
+            min-width: 300px;
+            margin: auto;
+        }
+    </style>
+
+    <script>
+        let data = []
+
+        async function getData() {
+            // 取資料
+            dataGet = await d3.csv('./dataSource/202211-2023422.csv')
+            data = dataGet.filter(i => i['發病年月日'] > '202302' && i['發病年月日'] < '202304')
+            drawChart()
+        };
+        getData()
+
+        function drawChart() {
+                // 刪除原本的svg.charts，重新渲染改變寬度的svg
+                d3.select('.chart svg').remove();
+
+                // RWD 的svg 寬高
+                const rwdSvgWidth = parseInt(d3.select('.chart').style('width')),
+                        rwdSvgHeight = rwdSvgWidth * 0.8,
+                        margin = 40,
+                        bandWidth = 20
+
+                const svg = d3.select('.chart')
+                    .append('svg')
+                    .attr('width', rwdSvgWidth)
+                    .attr('height', rwdSvgHeight);
+
+                // map 資料集
+                xData = data.map((i) => parseInt(i['發病年月日'].substring(4, 8))); // 取月日
+                yData = data.map((i) => parseInt(i['確定病例數']));
+
+                // 設定要給 X 軸用的 scale 跟 axis
+                const xScale = d3.scaleLinear()
+                    .domain(d3.extent(xData))
+                    .range([margin, rwdSvgWidth - margin]); // 寬度
+
+                // rwd X軸的刻度
+                let tickNumber = window.innerWidth > 900 ? xData.length / 2 : 8;
+                const xAxis = d3.axisBottom(xScale)
+                    .ticks(tickNumber)
+                    .tickFormat(d => d)
+
+                // 呼叫繪製x軸、調整x軸位置
+                const xAxisGroup = svg.append("g")
+                    .call(xAxis)
+                    .attr("transform", `translate(0,${rwdSvgHeight - margin})`)
+
+                // 設定要給 Y 軸用的 scale 跟 axis
+                const yScale = d3.scaleLinear()
+                    .domain([0, d3.max(yData)])
+                    .range([rwdSvgHeight - margin, margin]); // 數值要顛倒，才會從低往高排
+
+                const yAxis = d3.axisLeft(yScale)
+                    .ticks(5)
+
+                // 呼叫繪製y軸、調整y軸位置
+                const yAxisGroup = svg.append("g")
+                    .call(yAxis)
+                    .attr("transform", `translate(${margin},0)`)
+            
+                // 設定 path 的 d 
+                const lineChart = d3.line()
+                        .x((d) => xScale(parseInt(d['發病年月日'].substring(4, 8))))
+                        .y((d) => yScale(parseInt(d['確定病例數'])))
+                
+                //再把 lineChart 這個方法帶入資料，並把返還的值賦予給 path
+
+                // 建立折線圖
+                svg.append('path')
+                    .data(data)
+                    .attr("d", lineChart(data))
+                    .attr("fill", "none")
+                    .attr("stroke", "steelblue")
+                    .attr("stroke-width", 1.5)
+
+            }
+
+        d3.select(window).on('resize', drawChart);
+    </script>
+
+</body>
+
+</html>
