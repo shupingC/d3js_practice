@@ -1,0 +1,47 @@
+#title {
+    font-family: Tahoma, Geneva, sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background-color: green;
+    color: white;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+#description {
+    fill: #635F5D;
+    font-size: 1.2em;
+}
+
+.chart {
+    background-color: #DDDDDD;
+    margin: auto;
+    display: block;
+}
+
+/* .county {} */
+
+.states {
+    fill: none;
+    stroke: white;
+}
+
+
+#tooltip {
+    fill: #635F5D;
+    font-size: 1.2em;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    color: white;
+    padding: 5px 15px;
+    border: 1px #333 solid;
+    border-radius: 5px;
+}
+
+.legendLabel {
+    fill: #635F5D;
+    font-size: .8em;
+}

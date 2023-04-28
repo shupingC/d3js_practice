@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>D3 Practice Project</title>
+
+    <!-- include the library -->
+    <script src="https://d3js.org/d3.v6.js"> </script>
+
+</head>
+
+<body>
+
+    <div class="lineChart">
+    </div>
+ 
+    <script>
+
+        const svg = d3.select('.lineChart')
+                .append('svg')
+                .attr('width', 1000)
+                .attr('height', 1000);
+
+        // const parseTime = d3.timeParse("%B %d, %Y");
+        // parseTime("June 30, 2015")
+        // console.log(parseTime)
+
+        // var xScale = d3.scaleTime()
+        //         .domain([new Date(2020, 1, 1), new Date(2020, 1, 11)])
+        //         .range([0, 10]);        
+
+        // rwd X軸的刻度
+        // let tickNumber = window.innerWidth > 900 ? xData.length / 2 : 8;
+        // const xAxis = d3.axisBottom(xScale)
+        //     .ticks(tickNumber)
+        //     .tickFormat(d => d)
+
+        // X axis label:
+        // svg.append("text")
+        //     .attr("transform", "rotate(-90)")
+        //     .attr("text-anchor", "end")
+        //     .attr("x", -rwdSvgHeight / 2)
+        //     .attr("y", 10)
+        //     .text("Percentage");
+
+        // 呼叫繪製x軸、調整x軸位置                
+        // const xAxisGroup = svg.append("g")
+        //     .call(xScale)
+        //     .attr("transform", "translate(100,100)")
+
+
+        // var data = [
+        //         { "date": "Apr 1, 1970", "event": "A" },
+        //         { "date": "Jun 15, 1971", "event": "B" },
+        //         { "date": "Mar 30, 1972", "event": "C" },
+        //         { "date": "Jan 1, 1973", "event": "D" },
+        //         { "date": "Jun 15, 1973", "event": "E" }
+        //     ];
+
+        var data = [
+                { "date": "2020-08-19T00:00:00.000", "event": "A" },
+                { "date": "2020-08-20T00:00:00.000", "event": "B" },
+                { "date": "2020-09-21T00:00:00.000", "event": "C" },
+                { "date": "2020-09-22T00:00:00.000", "event": "D" },
+                { "date": "2020-10-23T00:00:00.000", "event": "E" },
+                { "date": "2020-10-24T00:00:00.000", "event": "F" }
+            ];
+
+        var parseTime = d3.timeParse("%Y-%m-%d");
+
+        var dates = [];
+        for (let i of data) {
+                dates.push(parseTime(i.date.substring(0, 10)));
+            }
+        console.log(dates);
+
+        var xScale = d3.scaleTime()
+                .domain(d3.extent(dates))
+                .range([25, 800]);
+
+        var xAxis = d3.axisBottom(xScale);
+
+
+        svg.append("g")
+            .attr("transform", "translate(0,60)")
+            .call(xAxis.ticks(10));
+        
+    </script>
+</body>

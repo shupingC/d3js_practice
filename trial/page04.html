@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Programming Final Project</title>
+
+    <!-- include the library -->
+    <script src="https://d3js.org/d3.v6.js"> </script>
+
+    <!-- <script src="d3chart.js"></script> -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="lineChart">
+        <h1>People who Took Prescription Medication for Mental Health in the Last 4 Weeks </h1>
+        <h2> By Age </h2>
+    </div>
+
+    <div class="lineChartUnmet">
+        <h1>People who Needed Counseling or Therapy But Did Not Get It, Last 4 Weeks </h1>
+        <h2> By Age </h2>
+    </div>
+
+    <script>
+
+        async function getCorsData() {
+                dataJson = await d3.json("https://data.cdc.gov/resource/yni7-er2q.json");
+                console.log('dataJson', dataJson);
+            }
+            getCorsData();
+        
+        async function getDataCSV() {
+                // get data
+                dataCSV = await d3.csv('./dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks (2).csv')
+                //data = dataGet.filter(i => i.Group === "By Age" && i.Indicator === 'Took Prescription Medication for Mental Health, Last 4 Weeks' && i.Phase > 0)
+                //drawChart()
+                console.log("dataCSV ", dataCSV);
+            }
+            getDataCSV()
+
+    </script>
+
+
+
+</body>
+
+</html>

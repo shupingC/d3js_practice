@@ -144,12 +144,12 @@
 
     async function getData() {
             // get data
-            dataGet = await d3.csv('./dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks (2).csv')
+            dataGet = await d3.csv('./dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks.csv')
             data = dataGet.filter(i => i.Group === "By Age" && i.Indicator === 'Took Prescription Medication for Mental Health, Last 4 Weeks' && i.Phase > 0)
             drawChart()
-            console.log(data)
+            // console.log('data', data) 
         };
-    getData()
+    getData();
 
     function drawChart() {
         // 刪除原本的svg.charts，重新渲染改變寬度的svg
@@ -157,7 +157,7 @@
 
         // RWD 的svg 寬高
         const rwdSvgWidth = parseInt(d3.select('.lineChart').style('width')),
-        rwdSvgHeight = rwdSvgWidth * 0.8,
+        rwdSvgHeight = rwdSvgWidth * 0.5,
         margin = 40,
         bandWidth = 20
 
@@ -169,6 +169,7 @@
         // map 資料集
         xData = data.map((i) => parseInt(i['Time Period']));
         yData = data.map((i) => parseInt(i.Value));
+        console.log('yData', yData)
 
         //資料分組                
         var valueByAge = d3.group(data, d => d.Subgroup);
@@ -186,19 +187,21 @@
         const xAxis = d3.axisBottom(xScale)
                     .ticks(tickNumber)
                     .tickFormat(d => d)
-
-        // X axis label:
-        svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("text-anchor", "end")
-            .attr("x", -rwdSvgHeight/2)
-            .attr("y", 10)
-            .text("Percentage");
-
-        // 呼叫繪製x軸、調整x軸位置                
+        
+        // 呼叫繪製x軸、調整x軸位置
         const xAxisGroup = svg.append("g")
                         .call(xAxis)
                         .attr("transform", `translate(0,${rwdSvgHeight - margin})`)
+        
+
+        // X axis label:
+        svg.append("text")
+            .attr("text-anchor", "end")
+            //.attr("transform", "rotate(-90)")
+            .attr("x", (rwdSvgWidth) / 2)
+            .attr("y", rwdSvgHeight)
+            .text("Time Period");
+
 
         // 設定要給 Y 軸用的 scale 跟 axis
         const yScale = d3.scaleLinear()
@@ -208,18 +211,18 @@
         const yAxis = d3.axisLeft(yScale)
                      .ticks(5)
 
-        // Y axis label:
-        svg.append("text")
-            .attr("text-anchor", "end")
-            //.attr("transform", "rotate(-90)")
-            .attr("x", (rwdSvgWidth) / 2)
-            .attr("y", rwdSvgHeight)
-            .text("Time Period");
-
         // 呼叫繪製y軸、調整y軸位置
         const yAxisGroup = svg.append("g")
             .call(yAxis)
             .attr("transform", `translate(${margin},0)`)
+        
+        // Y axis label:
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("text-anchor", "end")
+            .attr("x", -rwdSvgHeight / 2)
+            .attr("y", 10)
+            .text("Percentage");
 
         // color palette
         var res = Array.from(valueByAge.keys()); // list of group names
