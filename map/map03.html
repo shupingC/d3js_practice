@@ -81,17 +81,28 @@
         //console.log('minVal', minVal) //10
         //console.log('maxVal', maxVal) //32.1
 
-        d3.csv('../dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks.csv', function (data) {
+        d3.csv('../dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks.csv').then(function(data) {
             var dataValue = [];
+
             for (var d = 0; d < data.length; d++) {
+                if (data[d].Group === 'By State' && data[d].Indicator === 'Took Prescription Medication for Mental Health, Last 4 Weeks' && data[d]['Time Period'] === '13')
                 dataValue.push(parseFloat(data[d].Value))
             }
+
+            console.log('dataValue', dataValue); //51
+            
+            //  for (var d = 0; d < data.length; d++) {
+            //     dataValue.push(parseFloat(data[d].Value))
+            // }
+
             var minVal = d3.min(dataValue)
             var maxVal = d3.max(dataValue)
             var ramp = d3.scaleLinear().domain([minVal, maxVal]).range([lowColor, highColor])
+            console.log('minVal', minVal);//12.2
+            console.log('maxVal', maxVal);//26.8
 
             // Load GeoJSON data and merge with states data
-             d3.json('us-states.json', function (json) {
+             d3.json('us-states.json').then(function(json) {
 
                 // Loop through each state data value in the .csv file
                 for (var i = 0; i < data.length; i++) {
@@ -117,70 +128,68 @@
                     } 
                 
                 } 
-            //console.log('json.features', json.features);
+            console.log('json.features', json.features);
+            
+                       // Bind the data to the SVG and create one path per GeoJSON feature
+                 svg.selectAll("path")
+                     .data(json.features)
+                     .enter()
+                     .append("path")
+                     .attr("d", path)
+                     .style("stroke", "#fff")
+                     .style("stroke-width", "1")
+                     .style("fill", function (d) { return ramp(d.properties.value) });
+
+                 // add a legend
+                 var w = 140, h = 300;
+
+                 var key = d3.select("body")
+                     .append("svg")
+                     .attr("width", w)
+                     .attr("height", h)
+                     .attr("class", "legend");
+
+                 var legend = key.append("defs")
+                     .append("svg:linearGradient")
+                     .attr("id", "gradient")
+                     .attr("x1", "100%")
+                     .attr("y1", "0%")
+                     .attr("x2", "100%")
+                     .attr("y2", "100%")
+                     .attr("spreadMethod", "pad");
+
+                 legend.append("stop")
+                     .attr("offset", "0%")
+                     .attr("stop-color", highColor)
+                     .attr("stop-opacity", 1);
+
+                 legend.append("stop")
+                     .attr("offset", "100%")
+                     .attr("stop-color", lowColor)
+                     .attr("stop-opacity", 1);
+
+                 key.append("rect")
+                     .attr("width", w - 100)
+                     .attr("height", h)
+                     .style("fill", "url(#gradient)")
+                     .attr("transform", "translate(0,10)");
+
+                 var y = d3.scaleLinear()
+                     .range([h, 0])
+                     .domain([minVal, maxVal]);
+
+                 var yAxis = d3.axisRight(y);
+
+                 key.append("g")
+                     .attr("class", "y axis")
+                     .attr("transform", "translate(41,10)")
+                     .call(yAxis)
+                     ;
             })
            
 
         });
-        
 
-
-        //     // Bind the data to the SVG and create one path per GeoJSON feature
-        //     svg.selectAll("path")
-        //         .data(json.features)
-        //         .enter()
-        //         .append("path")
-        //         .attr("d", path)
-        //         .style("stroke", "#fff")
-        //         .style("stroke-width", "1")
-        //         .style("fill", function (d) { return ramp(d.properties.value) });
-
-        //     // add a legend
-        //     var w = 140, h = 300;
-
-        //     var key = d3.select("body")
-        //         .append("svg")
-        //         .attr("width", w)
-        //         .attr("height", h)
-        //         .attr("class", "legend");
-
-        //     var legend = key.append("defs")
-        //         .append("svg:linearGradient")
-        //         .attr("id", "gradient")
-        //         .attr("x1", "100%")
-        //         .attr("y1", "0%")
-        //         .attr("x2", "100%")
-        //         .attr("y2", "100%")
-        //         .attr("spreadMethod", "pad");
-
-        //     legend.append("stop")
-        //         .attr("offset", "0%")
-        //         .attr("stop-color", highColor)
-        //         .attr("stop-opacity", 1);
-
-        //     legend.append("stop")
-        //         .attr("offset", "100%")
-        //         .attr("stop-color", lowColor)
-        //         .attr("stop-opacity", 1);
-
-        //     key.append("rect")
-        //         .attr("width", w - 100)
-        //         .attr("height", h)
-        //         .style("fill", "url(#gradient)")
-        //         .attr("transform", "translate(0,10)");
-
-        //     var y = d3.scaleLinear()
-        //         .range([h, 0])
-        //         .domain([minVal, maxVal]);
-
-        //     var yAxis = d3.axisRight(y);
-
-        //     key.append("g")
-        //         .attr("class", "y axis")
-        //         .attr("transform", "translate(41,10)")
-        //         .call(yAxis)
-        // };
-        
     </script>
 </body>
 
