@@ -1,102 +1,137 @@
-console.log('success')
+//Width and height of map
+var width = 960;
+var height = 500;
 
-function drawSvg() {
-    // 刪除原本的svg.charts，重新渲染改變寬度的svg
-    d3.select('.map svg').remove();
-
-    // RWD 的svg 寬高
-    const rwdSvgWidth = parseInt(d3.select('.map').style('width')),
-        rwdSvgHeight = rwdSvgWidth * 0.5,
-        margin = 30,
-        bandWidth = 20
-
-    const svg = d3.select('.map')
-        .append('svg')
-        .attr('width', rwdSvgWidth)
-        .attr('height', rwdSvgHeight);
-    
-    console.log('drawSvg')
-}
+var lowColor = '#f9f9f9'
+var highColor = '#bc2a66'
 
 
-unemployment = [
-    { "name": "Vermont", "rate": 2.1, "rank": 1 }, 
-    { "name": "North Dakota", "rate": 2.4, "rank": 2 },
-    { "name": "Iowa", "rate": 2.5, "rank": 3 },
-    { "name": "New Hampshire", "rate": 2.5, "rank": 3 },
-    { "name": "Hawaii", "rate": 2.8, "rank": 5 },
-    { "name": "Utah", "rate": 2.8, "rank": 5 },
-    { "name": "Colorado", "rate": 2.9, "rank": 7 },
-    { "name": "Idaho", "rate": 2.9, "rank": 7 },
-    { "name": "Massachusetts", "rate": 2.9, "rank": 7 },
-]
+// D3 Projection
+var projection = d3.geoAlbersUsa()
+    .translate([width / 2, height / 2]) // translate to center of screen
+    .scale([1000]); // scale things down so see entire US
 
-// 9: Object { "name": "South Dakota", "rate": 2.9, "rank": 7 }
-// 10: Object { "name": "Virginia", "rate": 2.9, "rank": 7 }
-// 11: Object { "name": "Maine", "rate": 3, "rank": 12 }
-// 12: Object { "name": "Wisconsin", "rate": 3, "rank": 12 }
-// 13: Object { "name": "Nebraska", "rate": 3.1, "rank": 14 }
-// 14: Object { "name": "Oklahoma", "rate": 3.2, "rank": 15 }
-// 15: Object { "name": "Alabama", "rate": 3.3, "rank": 16 }
-// 16: Object { "name": "Delaware", "rate": 3.3, "rank": 16 }
-// 17: Object { "name": "Florida", "rate": 3.3, "rank": 16 }
-// 18: Object { "name": "Kansas", "rate": 3.3, "rank": 16 }
-// 19: Object { "name": "Missouri", "rate": 3.3, "rank": 16 }
-// 20: Object { "name": "New Jersey", "rate": 3.3, "rank": 16 }
-// 21: Object { "name": "Arkansas", "rate": 3.4, "rank": 22 }
-// 22: Object { "name": "Indiana", "rate": 3.4, "rank": 22 }
-// 23: Object { "name": "Minnesota", "rate": 3.4, "rank": 22 }
-// 24: Object { "name": "Montana", "rate": 3.4, "rank": 22 }
-// 25: Object { "name": "South Carolina", "rate": 3.4, "rank": 22 }
-// 26: Object { "name": "Texas", "rate": 3.4, "rank": 22 }
-// 27: Object { "name": "Rhode Island", "rate": 3.5, "rank": 28 }
-// 28: Object { "name": "Tennessee", "rate": 3.5, "rank": 28 }
-// 29: Object { "name": "Connecticut", "rate": 3.6, "rank": 30 }
-// 30: Object { "name": "Georgia", "rate": 3.6, "rank": 30 }
-// 31: Object { "name": "Wyoming", "rate": 3.6, "rank": 30 }
-// 32: Object { "name": "Maryland", "rate": 3.8, "rank": 33 }
-// 33: Object { "name": "Pennsylvania", "rate": 3.9, "rank": 34 }
-// 34: Object { "name": "New York", "rate": 4, "rank": 35 }
-// 35: Object { "name": "Ohio", "rate": 4, "rank": 35 }
-// 36: Object { "name": "Oregon", "rate": 4, "rank": 35 }
-// 37: Object { "name": "California", "rate": 4.1, "rank": 38 }
-// 38: Object { "name": "Nevada", "rate": 4.1, "rank": 38 }
-// 39: Object { "name": "Illinois", "rate": 4.2, "rank": 40 }
-// 40: Object { "name": "North Carolina", "rate": 4.2, "rank": 40 }
-// 41: Object { "name": "Kentucky", "rate": 4.3, "rank": 42 }
-// 42: Object { "name": "Louisiana", "rate": 4.3, "rank": 42 }
-// 43: Object { "name": "Michigan", "rate": 4.3, "rank": 42 }
-// 44: Object { "name": "Washington", "rate": 4.6, "rank": 45 }
-// 45: Object { "name": "West Virginia", "rate": 4.7, "rank": 46 }
-// 46: Object { "name": "Arizona", "rate": 4.9, "rank": 47 }
-// 47: Object { "name": "New Mexico", "rate": 4.9, "rank": 47 }
-// 48: Object { "name": "Mississippi", "rate": 5.1, "rank": 49 }
-// 49: Object { "name": "District of Columbia", "rate": 5.6, "rank": 50 }
-// 50: Object { "name": "Alaska", "rate": 6.3, "rank": 51 }
-// columns: Array(3)[""name"", ""rate"", ""rank""]
-// ]
+// Define path generator
+var path = d3.geoPath() // path generator that will convert GeoJSON to SVG paths
+    .projection(projection); // tell path generator to use albersUsa projection
 
-namemap = new Map(states.features.map(d => [d.properties.name, d.id]))
+//Create SVG element and append map to the SVG
+//WHERE ARE THIS CODE?
+const svg = d3.select("body")
+    .append('svg')
+    .attr("width", width)
+    .attr("height", height)
+    .attr("class", "graph")
+    .attr("fill", "blue");
 
-chart = UsStateChoropleth(unemployment, {
-    id: d => namemap.get(d.name),
-    value: d => d.rate,
-    scale: d3.scaleQuantize,
-    domain: [1, 10],
-    range: d3.schemeBlues[6],
-    title: (f, d) => `${f.properties.name}\n${d?.rate}%`
-})
 
-function UsStateChoropleth(data, {
-    features = states,
-    borders = statemesh,
-    width = 975,
-    height = 610,
-} = {}) {
-    return Choropleth(data, { features, borders, width, height});
-}
+d3.csv('../dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks.csv').then(function (data) {
+    var dataFilter = [];
 
-//drawSvg()
+    for (var d = 0; d < data.length; d++) {
+        if (data[d].Group === 'By State' && data[d].Indicator === 'Took Prescription Medication for Mental Health, Last 4 Weeks' && data[d]['Time Period'] === '13')
+            dataFilter.push(data[d])
+    }
 
-//might need to import "name"map
-    //"name"map = new Map(states.features.map(d => [d.properties."name", d.id]))
+    console.log('dataFilter', dataFilter); //51
+
+    var dataValue = dataFilter.map(function (d) {
+        return parseFloat(d.Value);
+    });
+
+    var minVal = d3.min(dataValue)
+    var maxVal = d3.max(dataValue)
+    var ramp = d3.scaleLinear().domain([minVal, maxVal]).range([lowColor, highColor])
+    //console.log('minVal', minVal);//12.2
+    //console.log('maxVal', maxVal);//26.8
+
+    // Load GeoJSON data and merge with states data
+    d3.json('us-states.json').then(function (json) {
+
+        // Loop through each state data value in the .csv file
+        for (var i = 0; i < dataFilter.length; i++) {
+
+            // Grab State Name
+            //var dataState = data[i].State;
+            var dataState = dataFilter[i].State;
+
+            // Grab data value 
+            //var dataValue = data[i].Value;
+            var dataValue = dataFilter[i].Value;
+
+            // Find the corresponding state inside the GeoJSON
+            for (var j = 0; j < json.features.length; j++) {
+                var jsonState = json.features[j].properties.name;
+
+                if (dataState === jsonState) {
+
+                    // Copy the data value into the JSON
+                    json.features[j].properties.value = dataValue;
+
+                    // Stop looking through the JSON
+                    break;
+                }
+            }
+
+        }
+        console.log('json.features', json.features);
+
+        // Bind the data to the SVG and create one path per GeoJSON feature
+        svg.selectAll('.path')
+            .data(json.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .style("stroke", "#fff")
+            .style("stroke-width", "1")
+            .style("fill", function (d) { return ramp(d.properties.value) });
+
+        // add a legend
+        var w = 140, h = 300;
+
+        var key = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .attr("class", "legend");
+
+        var legend = key.append("defs")
+            .append("svg:linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "100%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "100%")
+            .attr("spreadMethod", "pad");
+
+        legend.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", highColor)
+            .attr("stop-opacity", 1);
+
+        legend.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", lowColor)
+            .attr("stop-opacity", 1);
+
+        key.append("rect")
+            .attr("width", w - 100)
+            .attr("height", h)
+            .style("fill", "url(#gradient)")
+            .attr("transform", "translate(0,10)");
+
+        var y = d3.scaleLinear()
+            .range([h, 0])
+            .domain([minVal, maxVal]);
+
+        var yAxis = d3.axisRight(y);
+
+        key.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(41,10)")
+            .call(yAxis)
+            ;
+    })
+
+
+});
