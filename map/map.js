@@ -93,7 +93,8 @@ d3.csv('../dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks.csv').then(
             .append("svg")
             .attr("width", w)
             .attr("height", h)
-            .attr("class", "legend");
+            .attr("class", "legend")
+            .attr("transform", "translate(15, 6)"); //
 
         var legend = key.append("defs")
             .append("svg:linearGradient")
