@@ -17,7 +17,7 @@ var path = d3.geoPath() // path generator that will convert GeoJSON to SVG paths
 
 //Create SVG element and append map to the SVG
 //WHERE ARE THIS CODE?
-const svg = d3.select("body")
+const svg = d3.select(".map")
     .append('svg')
     .attr("width", width)
     .attr("height", height)
@@ -29,7 +29,7 @@ d3.csv('../dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks.csv').then(
     var dataFilter = [];
 
     for (var d = 0; d < data.length; d++) {
-        if (data[d].Group === 'By State' && data[d].Indicator === 'Took Prescription Medication for Mental Health, Last 4 Weeks' && data[d]['Time Period'] === '13')
+        if (data[d].Group === 'By State' && data[d].Indicator === 'Needed Counseling or Therapy But Did Not Get It, Last 4 Weeks' && data[d]['Time Period'] === '13')
             dataFilter.push(data[d])
     }
 
@@ -75,6 +75,7 @@ d3.csv('../dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks.csv').then(
 
         }
         console.log('json.features', json.features);
+        const obj = json.parse(d);
 
         // Bind the data to the SVG and create one path per GeoJSON feature
         svg.selectAll('.path')
@@ -89,7 +90,7 @@ d3.csv('../dataSource/Sheet 1-Mental_Health_Care_in_the_Last_4_Weeks.csv').then(
         // add a legend
         var w = 140, h = 300;
 
-        var key = d3.select("body")
+        var key = d3.select(".map")
             .append("svg")
             .attr("width", w)
             .attr("height", h)
